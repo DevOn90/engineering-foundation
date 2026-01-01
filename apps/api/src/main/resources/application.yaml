@@ -1,3 +1,13 @@
 spring:
   application:
     name: api
+
+logging:
+  level:
+    root: INFO
+    com.example.api: DEBUG
+  file:
+    path: /logs
+  pattern:
+    console: "%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
