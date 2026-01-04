@@ -1,6 +1,13 @@
 spring:
   application:
     name: api
+  jpa:
+    hibernate:
+      ddl-auto: validate    # Hibernate never creates table
+      show-sql: false
+  flyway:
+    enable: true
+    location: classpath:db/migration
 
 logging:
   level:
