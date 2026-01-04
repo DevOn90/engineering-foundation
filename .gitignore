@@ -4,6 +4,7 @@ target/
 
 # Logs
 *.log
+*.gz
 
 # IDE
 .idea/
@@ -12,3 +13,6 @@ target/
 
 # OS
 .DS_Store
+
+# Remove me
+apps/api/src/main/resources/db/migration/checkme.md
