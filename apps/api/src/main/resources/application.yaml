@@ -1,23 +1,41 @@
+# =================================================================
+# Default configuration (common to all environments)
+# =================================================================
+
 spring:
   application:
     name: api
+
+  # --- JPA / Hibernate settings ---
   jpa:
     hibernate:
-      ddl-auto: validate    # Hibernate never creates table
-      show-sql: false
+      ddl-auto: validate    # Hibernate only validates schema; never creates or drops tables
+      show-sql: false       # Default logging for SQL queries, can be overridden per env
+  
+  # --- Flyway settings ---
   flyway:
     enable: true
-    location: classpath:db/migration
+    location: classpath:db/migration   # Flyway migrations location
+
+# =================================================================
+# Logging configuration
+# =================================================================
 
 logging:
   level:
     root: INFO
-    com.example.api: DEBUG
+    com.example.api: INFO
+  
   file:
     path: /logs
+  
   pattern:
     console: "%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# =================================================================
+# Management / Actuator
+# =================================================================
 
 management:
   endpoints:

@@ -1,0 +1,35 @@
+# =================================================================
+# Dev profile overrides
+# =================================================================
+
+spring:
+  profiles: Dev
+
+
+  # --- Datasource for dev enviroment ---
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devdb
+    username: dev
+    password: dev
+    driver-class-name: org.postgresql.Driver
+
+  # --- JPA Overrides for dev ---
+  jpa:
+    show-sql: true       # Enable SQL logging for debugging in dev
+    hibernate:
+      ddl-auto: validate   
+
+# =================================================================
+# Logging overrides
+# =================================================================
+
+logging:
+  level:
+    root: DEBUG
+    com.example.api: DEBUG
+    org.hibernate.SQL: DEBUG
+
+# =================================================================
+# Management / Actuator
+# =================================================================
+# Not repeated here, since default already covers it
