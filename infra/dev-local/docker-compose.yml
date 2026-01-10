@@ -2,14 +2,16 @@ version: "3.9"
 
 services:
   api:
-    build: ../../apps/api
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.dev
     ports:
       - "8081:8080"
     environment:
+      SPRING_PROFILE_ACTIVE: local
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/devdb
       SPRING_DATASOURCE_USERNAME: dev
-      SPRING_DATASOURCE_PASSWORD: devpass
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_PASSWORD: dev
     depends_on:
       - db
     volumes:
@@ -20,6 +22,6 @@ services:
     environment:
       POSTGRES_DB: devdb
       POSTGRES_USER: dev
-      POSTGRES_PASSWORD: devpass
+      POSTGRES_PASSWORD: dev
     ports:
       - "5432:5432"
