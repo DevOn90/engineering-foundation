@@ -49,9 +49,12 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build \
-            -t ${{secrets.DOCKERHUB_USERNAME}}/api:${{github.sha}} ./apps/api
+            -t ${{secrets.DOCKERHUB_USERNAME}}/api:${{github.sha}} \
+            -t ${{secrets.DOCKERHUB_USERNAME}}/api:latest \
+            ./apps/api
 
       # Push Docker Image to Docker Hub
       - name: Push Docker image
         run: |
           docker push ${{secrets.DOCKERHUB_USERNAME}}/api:${{github.sha}}
+          docker push ${{secrets.DOCKERHUB_USERNAME}}/api:latest
