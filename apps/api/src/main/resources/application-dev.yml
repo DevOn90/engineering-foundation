@@ -3,7 +3,9 @@
 # =================================================================
 
 spring:
-  profiles: Dev
+  config:
+    activate:
+      on-profile: dev
 
 
   # --- Datasource for dev enviroment ---
