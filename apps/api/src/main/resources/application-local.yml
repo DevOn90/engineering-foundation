@@ -1,1 +1,15 @@
-# To be finished with relation to infra/01_dev-local/docker-compose.yml
+# =================================================================
+# Local dev profile overrides
+# =================================================================
+spring:
+  config:
+    activate:
+      on-profile: local
+
+# =================================================================
+# Logging configuration
+# =================================================================
+logging:
+  level:
+    root: DEBUG
+    com.example.api: DEBUG

@@ -14,5 +14,8 @@ target/
 # OS
 .DS_Store
 
+# Enviromnent variables
+.env
+
 # Remove me
 apps/api/src/main/resources/db/migration/checkme.md

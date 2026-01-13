@@ -2,16 +2,14 @@ version: "3.9"
 
 services:
   api:
+    container_name: api-local-dev
     build:
       context: ../../apps/api
       dockerfile: Dockerfile.dev
     ports:
-      - "8083:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/devdb
-      SPRING_DATASOURCE_USERNAME: dev
-      SPRING_DATASOURCE_PASSWORD: dev
+      - "${SERVICE_PORT}:8080"
+    env_file:
+      - .env
     depends_on:
       - db
     volumes:
@@ -20,14 +18,12 @@ services:
       - dev-local
 
   db:
-    image: postgres:15
-    container_name: db-dev-local
-    environment:
-      POSTGRES_DB: devdb
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev
+    container_name: db-local-dev
+    image: postgres:15  
+    env_file:
+      - .env
     ports:
-      - "5433:5432"     # For debugging only
+      - "${POSTGRES_PORT}:5432"     # For debugging only
     volumes:
       - local-db-data:/var/lib/postgresql/data
     networks:
