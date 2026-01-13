@@ -7,14 +7,6 @@ spring:
     activate:
       on-profile: dev
 
-
-  # --- Datasource for dev enviroment ---
-  datasource:
-    url: jdbc:postgresql://localhost:5432/devdb
-    username: dev
-    password: dev
-    driver-class-name: org.postgresql.Driver
-
   # --- JPA Overrides for dev ---
   jpa:
     show-sql: true       # Enable SQL logging for debugging in dev
