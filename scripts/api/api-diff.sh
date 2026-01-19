@@ -66,15 +66,22 @@ log "Check of API contract matches the API implementation starts."
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 ENV_FILE="$ROOT_DIR/infra/01_local-dev/.env"
 
-# Check if .env exists
-if [[ ! -f "$ENV_FILE" ]];then
-    log ".env file not found at "$ENV_FILE""
-fi
+CI_MODE="${CI:-false}"
+log "CI mode: $CI_MODE"
 
-# Source & Auto-export variables from .env
-set -a                # auto export ON
-source "$ENV_FILE" 
-set +a                # auto export OFF
+if [[ "$CI_MODE" == "false" ]];then
+  # === Local development mode
+  if [[ ! -f "$ENV_FILE" ]];then
+    fail ".env file not found at "$ENV_FILE""
+  fi
+  log "Loading environment variables from .env with auto-export"
+  set -a                # auto export ON
+  source "$ENV_FILE" 
+  set +a                # auto export OFF
+else
+  # === CI mode
+  log "CI mode active — skipping .env loading"
+fi         
 
 # Ensure SERVICE_PORT avaialble in .env
 : "${SERVICE_PORT:?SERVICE_PORT is not set in .env}"
