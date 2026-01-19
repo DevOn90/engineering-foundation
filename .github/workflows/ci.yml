@@ -32,6 +32,13 @@ jobs:
           cd apps/api
           mvn clean package -DskipTests
 
+      # API contract check
+      - name: Run API contract check
+        env: 
+          SERVICE_PORT: 8083
+        run: |
+          bash scripts/api/api-diff.sh
+
       # Run Tests
       - name: Run Tests
         run: |

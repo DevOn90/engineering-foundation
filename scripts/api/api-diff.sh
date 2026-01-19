@@ -106,10 +106,9 @@ trap cleanup EXIT
 # Flow-Step 1: Ensure API is running
 # --------------------------------------------------
 log "Ensuring API is running via docker compose"
-(
-  cd "$COMPOSE_DIR"
-  docker compose up -d --build
-)
+cd "$COMPOSE_DIR"
+/usr/bin/docker compose up -d --build  
+
 
 # Wait for API
 log "Waiting for API to become available"
