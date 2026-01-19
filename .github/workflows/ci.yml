@@ -32,6 +32,12 @@ jobs:
         run: |
           cd apps/api
           mvn clean package -DskipTests
+
+      - name: Upload API JAR
+        uses: actions/upload-artifact@v3
+        with:
+         name: api-jar
+         path: apps/api/target/*.jar
           
   # ---------------------------------------------------
   # Job 2: API Contract Check
@@ -51,6 +57,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      
+      - name: Download API JAR
+        uses: actions/download-artifact@v3
+        with:
+         name: api-jar
+         path: apps/api/target/
 
       - name: Run API contract check
         run: |
