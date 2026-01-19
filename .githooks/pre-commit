@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =====================================================================
+# Git Pre-Commit Hook
+# ---------------------------------------------------------------------
+# Purpose:
+#   Enforce local engineering standards before allowing a commit.
+#
+# Typical checks (current & future):
+#   - API contract consistency
+#   - Formatting / linting (optional)
+#   - Security / secret scanning
+#   - Repository conventions
+#
+# Execution model:
+#   - Runs automatically on `git commit`
+#   - Exit 0  → commit allowed
+#   - Exit !=0 → commit blocked with actionable error
+#
+# Notes:
+#   - Developers can bypass hooks with `--no-verify`
+#   - CI must re-validate all critical checks
+# =====================================================================
+
+# ----------------------------------------------
+# Helpers
+# ----------------------------------------------
+
+log() {
+    echo "[pre-commit hook][INFO] $1"
+}
+
+fail() {
+    echo "[pre-commit hook][ERROR] $1"
+    exit 1
+}
+
+# ------------------------------------------------
+# Initialization
+# ------------------------------------------------
+log "Pre-commit Hook initiated."
+
+# Resolve repository root to ensure consistent path resolution
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# ------------------------------------------------
+# Check 1: API Contract Consistency
+# ------------------------------------------------
+# Ensures that any change to the API implementation
+# is reflected in the committed OpenAPI contract.
+# Prevents silent contract drift.
+log "Running API contract consistency check."
+
+API_DIFF_SCRIPT="$REPO_ROOT/scripts/api/api-diff.sh"
+
+if [[ ! -x "$API_DIFF_SCRIPT" ]]; then
+  fail "api-diff.sh not found or not executable. Did you forget chmod +x?"
+fi
+
+"$API_DIFF_SCRIPT"
+
+log "API contract check passed"
+
+# --------------------------------------------------
+# Future checks can be added below
+# --------------------------------------------------
+# Example:
+#   - Linting
+#   - Static analysis
+#   - Policy checks
+#
+# Keep checks fast and deterministic.
