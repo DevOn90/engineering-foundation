@@ -18,23 +18,6 @@ set -euo pipefail
 # ==============================================================================
 
 # --------------------------------------------------
-# Export Dummy enviroment variables
-# --------------------------------------------------
-# These are just dummy, to spin containers for API contract check
-# --- Spring Boot configuration ---
-export SERVICE_PORT=8080
-export SPRING_PROFILES_ACTIVE=local
-export SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/dummy
-export SPRING_DATASOURCE_USERNAME=dummy
-export SPRING_DATASOURCE_PASSWORD=dummy
-
-# --- Postgres DB configuration ---
-export POSTGRES_DB=dummy
-export POSTGRES_USER=dummy
-export POSTGRES_PASSWORD=dummy
-export POSTGRES_PORT=5432
-
-# --------------------------------------------------
 # Helpers
 # --------------------------------------------------
 log() {
@@ -45,6 +28,11 @@ fail() {
     echo "[api-diff-CI][ERROR] $1"
     exit 1
 }
+
+# --------------------------------------------------
+# Prerequisites Validator/s
+# --------------------------------------------------
+command -v jq >/dev/null 2>&1 || fail "jq is required but not installed"
 
 # --------------------------------------------------
 # Config
@@ -61,8 +49,11 @@ log "Starting API for contract check"
 
 cd "$ROOT_DIR/apps/api"
 
+# Ensure JAR artifact exists
+ls target/*.jar >/dev/null 2>&1 || fail "API JAR not found in target/"
+
 # Start Spring Boot app in background
-java -jar target/*.jar --server.port="$SERVICE_PORT" &
+java -jar target/*.jar --spring.profiles.active=contract --server.port="$SERVICE_PORT" &
 APP_PID=$!
 
 # Ensure cleanup happens on EXIT or error
