@@ -4,7 +4,5 @@
  * and placeholder/s replace from shared infra .env  
  */
 export const environment = {
-    production: false,
-    name: "local-dev",
-    apiUrl: "__API_BASE_URL__"    
+    apiBaseUrl: 'http://localhost:8083'   
  };

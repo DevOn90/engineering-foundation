@@ -1,1 +1,6 @@
-<p>user-list-page works!</p>
+<button [routerLink]="'/hello'">Back to Hello</button>
+<ul>
+    <li *ngFor="let user of users">
+        {{user.id}} - {{user.name}}
+    </li>
+</ul>

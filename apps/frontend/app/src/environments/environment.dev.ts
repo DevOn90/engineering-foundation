@@ -1,3 +1,5 @@
 /* Development Environment Configration */
 
-export const environment = {};
+export const environment = {
+    apiBaseUrl: 'http://localhost:8083'
+};
