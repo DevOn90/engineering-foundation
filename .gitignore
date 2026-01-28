@@ -18,3 +18,4 @@ target/
 
 # Remove me
 apps/api/src/main/resources/db/migration/checkme.md
+apps/auth/architecture.md
