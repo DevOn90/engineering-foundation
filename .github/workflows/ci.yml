@@ -121,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
-          path: app/frontend/dist/app
+          path: apps/frontend/app/dist/app
 
   # ----------------------------------------------------
   # Job 5: Build & Push Backend Docker image
