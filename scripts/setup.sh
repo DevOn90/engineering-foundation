@@ -20,11 +20,11 @@ set -euo pipefail
 # --------------------------------------------------
 
 log() {
-    echo "[Setup][INFO] $1"
+    /usr/bin/echo "[Setup][INFO] $1"
 }
 
 fail() {
-    echo "[Setup][ERROR] $1"
+    /usr/bin/echo "[Setup][ERROR] $1"
     exit 1
 }
 

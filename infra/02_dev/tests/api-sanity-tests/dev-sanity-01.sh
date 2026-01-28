@@ -2,4 +2,17 @@
 
 set -euo pipefail
 
-/usr/bin/echo "API Sanity test placeholder"
+# --------------------------------------------------
+# Helpers
+# --------------------------------------------------
+
+log() {
+    /usr/bin/echo "[DEV-ENV][INFO] $1"
+}
+
+fail() {
+    /usr/bin/echo "[DEV-ENV][ERROR] $1"
+    exit 1
+}
+
+log "API Sanity test placeholder"

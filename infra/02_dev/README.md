@@ -41,6 +41,7 @@ cd infra/02_dev
     - Black-box tests
 5. Collect logs under `./logs/<test-type>/` with timestamped filenames
 6. Promote the tested Docker image to `dev-approved-<IMAGE_TAG>` and `dev-approved-latest` tags in Docker Hub
+7. Kill all related docker containers
 
 ## Logs
 
