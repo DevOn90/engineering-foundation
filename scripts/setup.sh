@@ -38,18 +38,8 @@ log "Starting repository setup"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # ---------------------------------------------------
-# Step1: Ensure all repo scripts executability
+# Step 1: TBD (Provision)
 # ---------------------------------------------------
-
-bash ./make-executable.sh
-
-# ---------------------------------------------------
-# Step 2: Git Hooks Setup
-# ---------------------------------------------------
-
-log "Configuraing Git Hooks"
-
-"$REPO_ROOT/scripts/setup-hooks.sh"
 
 # ----------------------------------------------------
 # Finalization
