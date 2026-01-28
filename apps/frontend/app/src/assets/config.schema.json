@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Frontend Runtime Configuration",
+  "description": "Runtime configuration injected into the Angular app via assets/config.json",
+
+  "type": "object",
+  "required": [
+    "env",
+    "apiBaseUrl",
+    "features"
+  ],
+
+  "properties": {
+    "env": {
+      "type": "string",
+      "description": "Deployment environment name",
+      "enum": ["local", "dev", "test", "prod"]
+    },
+
+    "apiBaseUrl": {
+      "type": "string",
+      "description": "Base URL for backend API"
+    },
+
+    "features": {
+      "type": "object",
+      "description": "Feature flags toggled at runtime",
+      "additionalProperties": false,
+      "properties": {
+        "enableDebug": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableNewDashboard": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+
+    "logging": {
+      "type": "object",
+      "description": "Client-side logging configuration",
+      "required": ["level"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["trace", "debug", "info", "warn", "error"]
+        }
+      }
+    },
+
+    "buildInfo": {
+      "type": "object",
+      "description": "Injected by CI for traceability",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "buildTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+
+  "additionalProperties": false
+}
