@@ -64,7 +64,7 @@ log "Check of API contract matches the API implementation starts."
 # INIT-Step 1: Source .env for local dev Build
 # --------------------------------------------------
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-ENV_FILE="$ROOT_DIR/infra/01_local-dev/.env"
+ENV_FILE="$ROOT_DIR/infra/runtime/env/local.env"
 
 # Check if .env file exists
 if [[ ! -f "$ENV_FILE" ]];then
@@ -86,7 +86,7 @@ fi
 SERVICE_NAME="api"
 API_URL="http://localhost:${SERVICE_PORT}/v3/api-docs"
 CONTRACT_FILE="$ROOT_DIR/docs/design/api-contract.openapi.json"
-COMPOSE_DIR="$ROOT_DIR/infra/01_local-dev"
+COMPOSE_DIR="$ROOT_DIR/infra/local"
 HEALTH_URL="http://localhost:${SERVICE_PORT}/actuator/health"
 
 # Create unique temporary file for generated contract
@@ -108,7 +108,7 @@ trap cleanup EXIT
 # --------------------------------------------------
 log "Ensuring API is running via docker compose"
 cd "$COMPOSE_DIR"
-/usr/bin/docker compose up -d --build  
+/usr/bin/docker compose --env-file ../runtime/env/local.env -f docker-compose-local.yml up -d --build  
 
 
 # Wait for API

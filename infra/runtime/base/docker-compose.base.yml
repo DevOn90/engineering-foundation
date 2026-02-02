@@ -1,0 +1,16 @@
+services:
+  api: 
+    image: idevon90/api:${IMAGE_TAG}
+    depends_on:
+      - db
+    networks:
+      - app-net
+
+  db:
+    image: postgres:15
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

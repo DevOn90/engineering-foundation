@@ -52,7 +52,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 # Prevents silent contract drift.
 log "Running API contract consistency check."
 
-API_DIFF_SCRIPT="$REPO_ROOT/scripts/api/api-diff.sh"
+API_DIFF_SCRIPT="$REPO_ROOT/scripts/ci/api-diff.sh"
 
 if [[ ! -x "$API_DIFF_SCRIPT" ]]; then
   fail "api-diff.sh not found or not executable. Did you forget chmod +x?"

@@ -1,35 +1,24 @@
-version: "3.9"
-
 services:
   api:
-    image: idevon90/api:${IMAGE_TAG}
     container_name: api-dev
     ports:
-      - "${SERVICE_PORT}:8080"
+      - "8082:8080"
     env_file:
       - .env
-    depends_on:
-      - db
-    networks:
-      - dev-env
 
   db:
-    image: postgres:15
     container_name: db-dev
     env_file:
       - .env
     volumes:
       - dev-db-data:/var/lib/postgresql/data
     networks:
-      - dev-env
       - dev-tools
 
 volumes:
   dev-db-data:
 
 networks:
-  dev-env:
-    external: false
   dev-tools: 
     external: true
       

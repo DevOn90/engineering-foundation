@@ -1,0 +1,16 @@
+{
+    "env": "/api",
+    "apiBaseUrl": "",
+    "features": {
+        "enableDebug": false,
+        "enableNewDashboard": false
+    },
+    "logging": {
+        "level": "info"
+    },
+    "buildInfo": {
+        "version": "__BUILD_VERSION__",
+        "commit": "__BUILD_COMMIT__",
+        "buildTime": "__BUILD_TIME__"
+    }
+}

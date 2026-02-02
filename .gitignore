@@ -15,6 +15,7 @@ target/
 
 # Enviromnent variables
 .env
+*.env
 
 # Remove me
 apps/api/src/main/resources/db/migration/checkme.md

@@ -10,7 +10,7 @@ jobs:
   # Job 1: Build API JAR Backend
   # -------------------------------------------------
   build-api:
-    name: Build API
+    name: Build API Backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -21,6 +21,7 @@ jobs:
           test -d apps
           test -d infra
           test -d docs
+          test -d scripts
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3

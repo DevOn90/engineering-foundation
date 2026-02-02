@@ -28,6 +28,17 @@ set -euo pipefail
 # Helpers
 # ---------------------------------------------------------
 
+# Resolve script directory path
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+COMPOSE_BASE="${SCRIPT_DIR}/../docker-compose.base.yml"
+COMPOSE_DEV="${SCRIPT_DIR}/docker-compose.dev.yml"
+COMPOSE_CMD="/usr/bin/docker compose \
+            --env-file "${SCRIPT_DIR}/.env" \
+            -f ${COMPOSE_BASE} \
+            -f ${COMPOSE_DEV}" 
+              
+
 log() {
     /usr/bin/echo "[DEV-ENV][INFO] $1"
 }
@@ -39,8 +50,10 @@ fail() {
 
 docker_down() {
   log "Removing created Docker Containers."
-  /usr/bin/docker compose down
+  $COMPOSE_CMD down
 }
+
+trap docker_down EXIT
 
 log ""
 log "===================================================="
@@ -117,12 +130,15 @@ log "IMAGE_TAG=$IMAGE_TAG is the latest CI image"
 # -------------------------------------------------------------------------
 # 3. Pull & Build Docker Image in DEV environment
 # -------------------------------------------------------------------------
+#SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 3.1 Pull
-/usr/bin/docker compose pull
+$COMPOSE_CMD pull
+#/usr/bin/docker compose --env-file "${SCRIPT_DIR}/.env" -f "${SCRIPT_DIR}/../docker-compose.base.yml" -f "${SCRIPT_DIR}/docker-compose.dev.yml" pull
 
 # 3.2 Build
-/usr/bin/docker compose up -d
+$COMPOSE_CMD up -d
+#/usr/bin/docker compose --env-file "${SCRIPT_DIR}/.env" -f "${SCRIPT_DIR}/../docker-compose.base.yml" -f "${SCRIPT_DIR}/docker-compose.dev.yml" up -d
 
 # -------------------------------------------------------------------------
 # 4. Orchestrate DEV environment Tests 
@@ -142,9 +158,6 @@ TS=$(date +%Y%m%d-%H%M%S)
 log "Running Smoke Tests"
 if ! ./tests/smoke-tests/dev-smt-01.sh 2>&1 | tee ./logs/smoke/smoke-$TS.log; then
     fail "Smoke tests failed! Check ./logs/smoke/smoke-*.log"
-    
-    # Kill created docker containers
-    docker_down
     exit 1
 fi
 
@@ -152,9 +165,6 @@ fi
 log "Running Health Tests"
 if ! ./tests/health-tests/dev-health-01.sh 2>&1 | tee ./logs/health/health-$TS.log; then
     fail "Health tests failed! Check ./logs/health/health-*.log"
-    
-    # Kill created docker containers
-    docker_down
     exit 1
 fi
   
@@ -162,9 +172,6 @@ fi
 log "Running API Sanity Tests"
 if ! ./tests/api-sanity-tests/dev-sanity-01.sh 2>&1 | tee ./logs/sanity/api-sanity-$TS.log; then
     fail "API Sanity tests failed! Check ./logs/sanity/api-sanity-*.log"
-    
-    # Kill created docker containers
-    docker_down
     exit 1
 fi
 
@@ -172,9 +179,6 @@ fi
 log "Running Black-box Tests"
 if ! ./tests/black-box-tests/api-endpoints.sh 2>&1 | tee ./logs/black-box/black-box-$TS.log; then
     fail "Black-box tests failed! Check ./logs/black-box/black-box-*.log"
-    
-    # Kill created docker containers
-    docker_down
     exit 1
 fi
 
@@ -200,16 +204,10 @@ if /usr/bin/docker manifest inspect "$TARGET_IMAGE" >/dev/null 2>&1; then
   if [[ "$EXISTING_DIGEST" == "$SOURCE_DIGEST" ]]; then
     log "Image already promoted to DEV-approved ($TARGET_IMAGE)"
     log "Promotion is idempotent — nothing to do."
-
-    # Kill created docker containers
-    docker_down
     exit 0
   else
     fail "$TARGET_IMAGE already exists but points to a DIFFERENT image"
     fail "Manual intervention required."
-
-    # Kill created docker containers
-    docker_down
     exit 1
   fi
 fi
@@ -223,18 +221,12 @@ log "Checking Docker Hub authentication"
 
 if ! /usr/bin/docker info >/dev/null 2>&1; then
   fail "Docker daemon is not running"
-
-  # Kill created docker containers
-  docker_down
   exit 1
 fi
 
 if ! /usr/bin/docker manifest inspect idevon90/api:ci-latest >/dev/null 2>&1; then
   fail "Docker Hub authentication required"
   fail "Please login using: docker login"
-  
-  # Kill created docker containers
-  docker_down
   exit 1
 fi
 
@@ -255,20 +247,7 @@ log " - Immutable tag: $PROMOTED_TAG"
 log " - Rolling tag: dev-approved-latest"
 
 # -------------------------------------------------------------------------
-# 6. Kill all related Docker Containers  
-# -------------------------------------------------------------------------
-
-log ""
-log "===================================================="
-log "#         Killing DEV Containers                   #"
-log "===================================================="
-log ""
-
-# Kill created docker containers
-docker_down
-
-# -------------------------------------------------------------------------
-# 7. Finalization  
+# 6. Finalization  
 # -------------------------------------------------------------------------
 
 log ""
