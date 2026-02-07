@@ -9,8 +9,9 @@
 # ----------------------------------------------------
 # common.sh
 # Shared helpers for local scripts
+# DO NOT execute directly, instead 'source'
 #
-# Version: 1.0.0
+# Version: 1.1.0
 # Stability: stable
 #
 # Contract:
@@ -18,6 +19,7 @@
 # - LOG_LEVEL controls verbosity
 # - CI=true enables JSON logs
 # - Colors enabled only for human output
+# - Supports --no-color flag tp disable colors manually
 #
 # Breaking changes require version bump
 # ----------------------------------------------------
@@ -50,20 +52,22 @@ INFRA_DIR="$REPO_ROOT/infra"
 ENV_DIR="$INFRA_DIR/runtime/env"
 
 # --------------------------------------------------
-# Color Handling (TTY-aware)
+# Color Handling (TTY-aware + --no-color)
 # --------------------------------------------------
-if [[ -t 2 ]]; then
-  COLOR_YELLOW="\033[33m"
-  COLOR_RED="\033[31m"
-  COLOR_BLUE="\033[34m"
-  COLOR_DIM="\033[2m"
-  COLOR_RESET="\033[0m"
-else
+NO_COLOR="${NO_COLOR:-false}"
+
+if [[ "$NO_COLOR" == "true"  ]] || [[ ! -t 2 ]]; then
   COLOR_YELLOW=""
   COLOR_RED=""
   COLOR_BLUE=""
   COLOR_DIM=""
   COLOR_RESET=""
+else
+  COLOR_YELLOW="\033[33m"
+  COLOR_RED="\033[31m"
+  COLOR_BLUE="\033[34m"
+  COLOR_DIM="\033[2m"
+  COLOR_RESET="\033[0m"
 fi
 
 # --------------------------------------------------
@@ -169,6 +173,16 @@ require_initialized() {
 ## local.sh up     → requires_initialized → OK
 ## local.sh reset  → removes marker
 ## local.sh up     → FAILS (correctly)
+
+###########################################################################
+## Check behavior of:
+## debug & trace & fail
+## Issue: when i add to local.sh function debug "" 
+# debug "test debug"
+# trace "test trace"
+# error "error test"
+# warn "warn test"
+#fail "fail test"
 
 ###########################################################################
 ## Add --no-color 

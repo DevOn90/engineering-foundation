@@ -10,13 +10,15 @@ set -o nounset
 set -o pipefail
 
 # ----------------------------------------------------
-# Parse flags (optional)
+# Parse flags 
 # ----------------------------------------------------
 LOG_LEVEL="INFO"
+NO_COLOR=false
 ARGS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --no-color) export NO_COLOR=true; shift ;;
     --quiet)   export LOG_LEVEL="WARN"; shift ;;
     --verbose) export LOG_LEVEL="DEBUG"; shift ;;
     --trace)   export LOG_LEVEL="TRACE"; shift ;;
