@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# up.sh 
+
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -7,13 +9,15 @@ set -o pipefail
 # ----------------------------------------------------
 # Source common helpers
 # ----------------------------------------------------
-source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../local/helpers/common.sh"
+source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/common.sh"
 
-
-# log "Purpose: One-time setup for the developer’s machine."
-# log "Checks OS, tools, Docker, git, PATHs."
-# log "Does not touch project files, just ensures the machine can work with the repo."
-# log "Run once after cloning."
+# log "I am up.sh"
+# log "Purpose: Start local Docker stack."
+# log "Depends on: .local-initialized + env files."
+# log "Typical flow:"
+# log "  1. Check require_initialized"
+# log "  2. Run docker compose up using .env files"
+# log "  3. Map logs, volumes, networks"
 
 log "Random log message..."
 warn "This is a warning, check configs"

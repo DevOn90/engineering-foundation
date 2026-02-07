@@ -31,10 +31,10 @@ set -euo pipefail
 # Resolve script directory path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-COMPOSE_BASE="${SCRIPT_DIR}/../docker-compose.base.yml"
-COMPOSE_DEV="${SCRIPT_DIR}/docker-compose.dev.yml"
+COMPOSE_BASE="${SCRIPT_DIR}/../../infra/runtime/base/docker-compose.base.yml"
+COMPOSE_DEV="${SCRIPT_DIR}/../../infra/runtime/dev/docker-compose.dev.yml"
 COMPOSE_CMD="/usr/bin/docker compose \
-            --env-file "${SCRIPT_DIR}/.env" \
+            --env-file "${SCRIPT_DIR}/../../infra/runtime/env/dev.env" \
             -f ${COMPOSE_BASE} \
             -f ${COMPOSE_DEV}" 
               
@@ -65,7 +65,7 @@ log ""
 # 1. Validate .env and read IMAGE_TAG 
 #---------------------------------------------------------
 
-ENV_FILE=".env"
+ENV_FILE="${SCRIPT_DIR}/../../infra/runtime/env/dev.env"
 
 # 1.1 Check if .env exists
 if [[ ! -f "$ENV_FILE" ]];then
@@ -151,33 +151,36 @@ log "===================================================="
 log ""
 
 # 4.0 Create Tests log folders & time stamp variable
-mkdir -p ./logs/smoke ./logs/health ./logs/sanity ./logs/black-box
+mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/smoke 
+mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/health
+mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/sanity
+mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/black-box
 TS=$(date +%Y%m%d-%H%M%S)
 
 # 4.1 Run Smoke tests
 log "Running Smoke Tests"
-if ! ./tests/smoke-tests/dev-smt-01.sh 2>&1 | tee ./logs/smoke/smoke-$TS.log; then
+if ! ${SCRIPT_DIR}/../tests/common/dev-smt-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/smoke/smoke-$TS.log; then     
     fail "Smoke tests failed! Check ./logs/smoke/smoke-*.log"
     exit 1
 fi
 
 # 4.2 Run Health tests
 log "Running Health Tests"
-if ! ./tests/health-tests/dev-health-01.sh 2>&1 | tee ./logs/health/health-$TS.log; then
+if ! ${SCRIPT_DIR}/../tests/common/dev-health-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/health/health-$TS.log; then
     fail "Health tests failed! Check ./logs/health/health-*.log"
     exit 1
 fi
   
 # 4.3 API sanity tests
 log "Running API Sanity Tests"
-if ! ./tests/api-sanity-tests/dev-sanity-01.sh 2>&1 | tee ./logs/sanity/api-sanity-$TS.log; then
+if ! ${SCRIPT_DIR}/../tests/common/dev-sanity-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/sanity/sanity-$TS.log; then
     fail "API Sanity tests failed! Check ./logs/sanity/api-sanity-*.log"
     exit 1
 fi
 
 # 4.4 Black-box only  
 log "Running Black-box Tests"
-if ! ./tests/black-box-tests/api-endpoints.sh 2>&1 | tee ./logs/black-box/black-box-$TS.log; then
+if ! ${SCRIPT_DIR}/../tests/common/api-endpoints.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/black-box/black-box-$TS.log; then
     fail "Black-box tests failed! Check ./logs/black-box/black-box-*.log"
     exit 1
 fi

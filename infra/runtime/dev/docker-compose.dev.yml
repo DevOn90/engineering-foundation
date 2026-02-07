@@ -4,12 +4,12 @@ services:
     ports:
       - "8082:8080"
     env_file:
-      - .env
+      - ../env/dev.env
 
   db:
     container_name: db-dev
     env_file:
-      - .env
+      - ../env/dev.env
     volumes:
       - dev-db-data:/var/lib/postgresql/data
     networks:

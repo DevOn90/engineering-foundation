@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# down.sh 
+
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -7,13 +9,12 @@ set -o pipefail
 # ----------------------------------------------------
 # Source common helpers
 # ----------------------------------------------------
-source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../local/helpers/common.sh"
+source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/common.sh"
 
-
-# log "Purpose: One-time setup for the developer’s machine."
-# log "Checks OS, tools, Docker, git, PATHs."
-# log "Does not touch project files, just ensures the machine can work with the repo."
-# log "Run once after cloning."
+# log "Purpose: Stop running local stack without removing setup"
+# log "Actions:"
+# log    "docker compose down"
+# log    "Keep .local-initialized and logs"
 
 log "Random log message..."
 warn "This is a warning, check configs"
