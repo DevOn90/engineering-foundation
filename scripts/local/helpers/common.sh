@@ -3,15 +3,9 @@
 # ----------------------------------------------------
 # common.sh
 # Shared helpers for local scripts
-# DO NOT execute directly
-# ----------------------------------------------------
-
-# ----------------------------------------------------
-# common.sh
-# Shared helpers for local scripts
 # DO NOT execute directly, instead 'source'
 #
-# Version: 1.1.0
+# Version: 2.0.0
 # Stability: stable
 #
 # Contract:
@@ -20,6 +14,14 @@
 # - CI=true enables JSON logs
 # - Colors enabled only for human output
 # - Supports --no-color flag tp disable colors manually
+# - Supports LOG_CONTEXT environment variable for log scoping
+#   * If LOG_CONTEXT is exported, logs shows it e.g.: [service=db]
+#   * If LOG_CONTEXT is not exported, placeholder id shows: [LOG_CONTEXT]
+# - All logging function (log,debug,trace,warn,error,fail) respects 
+#   environment variables LOG_LEVEL, CI, LOG_CONTEXT
+#
+# Details:
+# For more details, check README.local.md 
 #
 # Breaking changes require version bump
 # ----------------------------------------------------
@@ -37,6 +39,8 @@ export PATH="/usr/local/bin:/usr/bin:/bin"
 
 # Contract for Logging
 LOG_LEVEL="${LOG_LEVEL:-INFO}"   # ERROR | WARN | INFO | DEBUG | TRACE
+NO_COLOR="${NO_COLOR:-false}"
+LOG_CONTEXT="${LOG_CONTEXT:-LOG_CONTEXT}"
 CI="${CI:-false}"
 
 # --------------------------------------------------
@@ -54,7 +58,6 @@ ENV_DIR="$INFRA_DIR/runtime/env"
 # --------------------------------------------------
 # Color Handling (TTY-aware + --no-color)
 # --------------------------------------------------
-NO_COLOR="${NO_COLOR:-false}"
 
 if [[ "$NO_COLOR" == "true"  ]] || [[ ! -t 2 ]]; then
   COLOR_YELLOW=""
@@ -106,10 +109,10 @@ _log() {
   esac
 
   if [[ "$CI" == "true" ]]; then
-    printf '{"ts":"%s","level":"%s","script":"%s","msg":"%s"}\n' \
-      "$(timestamp)" "$level" "$SCRIPT_NAME" "$*"
+    printf '{"ts":"%s","level":"%s","context":"%s","script":"%s","msg":"%s"}\n' \
+      "$(timestamp)" "$level" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*"
   else
-    printf '%b[%s][%s][%s]: %s%b\n' "$color" "$(timestamp)" "$level" "$SCRIPT_NAME" "$*" "$COLOR_RESET"
+    printf '%b[%s][%s][%s][%s]: %s%b\n' "$color" "$(timestamp)" "$level" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET"
   fi
 }
 
@@ -122,8 +125,8 @@ warn() {
   if [[ "$CI" == "true" ]]; then
     _log WARN "$@"
   else
-    printf '%b[%s][WARN][%s]: %s%b\n' \
-    "$COLOR_YELLOW" "$(timestamp)" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&2
+    printf '%b[%s][WARN][%s][%s]: %s%b\n' \
+    "$COLOR_YELLOW" "$(timestamp)" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&2
   fi
   
 }
@@ -132,8 +135,8 @@ error() {
   if [[ "$CI" == "true" ]]; then
     _log ERROR "$@"
   else
-    printf '%b[%s][ERROR][%s]: %s%b\n' \
-      "$COLOR_RED" "$(timestamp)" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&2
+    printf '%b[%s][ERROR][%s][%s]: %s%b\n' \
+      "$COLOR_RED" "$(timestamp)" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&2
   fi
 }
 
@@ -184,12 +187,6 @@ require_initialized() {
 # warn "warn test"
 #fail "fail test"
 
-###########################################################################
-## Add --no-color 
-##    Where color is bad:
-##    - redicting logs to file (./localh.sh > local.log)
-## Never force formating without opt-out
-## Is this true also for timestamp
 ###########################################################################
 ## Add log file output 
 ## ./local.sh up | tee logs/local-2026-02-07.log (how date??)
