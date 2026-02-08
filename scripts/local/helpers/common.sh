@@ -178,31 +178,10 @@ require_initialized() {
 ## local.sh up     → FAILS (correctly)
 
 ###########################################################################
-## Check behavior of:
-## debug & trace & fail
-## Issue: when i add to local.sh function debug "" 
-# debug "test debug"
-# trace "test trace"
-# error "error test"
-# warn "warn test"
-#fail "fail test"
-
-###########################################################################
 ## Add log file output 
 ## ./local.sh up | tee logs/local-2026-02-07.log (how date??)
-###########################################################################
-## Add LOG_CONTEXT (e.g. service=api) 
-## [INFO][service=api]: Starting
-## [INFO][service=db]: Starting
-## [ERROR][service=api]: Connection failed 
-###########################################################################
-## Lock this as v1.0 common.sh
-## common.sh v1.0
-# - logging contract fixed
-# - flags fixed
-# - CI format fixed
 
-# common.sh v2.0
-# - adds metrics
-# - changes JSON schema
-
+##############################################################################
+# INFO - What is happening?
+# DEBUG - Developer diagnostic, values, decisions, resolved path
+# TRACE - Where exactly, we are right now?

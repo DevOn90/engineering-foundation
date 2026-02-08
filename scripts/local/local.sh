@@ -10,7 +10,16 @@ set -o nounset
 set -o pipefail
 
 # ----------------------------------------------------
-# Parse flags 
+# Parse flags (optional)
+#
+# LOG_LEVEL controls verbosity:
+#   ERROR < WARN < INFO < DEBUG < TRACE
+#   --quiet    => LOG_LEVEL=WARN
+#   --verbose  => LOG_LEVEL=DEBUG
+#   --trace    => LOG_LEVEL=TRACE
+#
+# --ci      => sets CI=true (JSON logging)
+# --no-color => disables colorized logs
 # ----------------------------------------------------
 LOG_LEVEL="INFO"
 NO_COLOR=false
@@ -35,11 +44,21 @@ COMMAND="${ARGS[0]:-help}"
 # ----------------------------------------------------
 # Source common helpers
 # ----------------------------------------------------
+
 source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/helpers/common.sh"
+
+# Debug & trace initial
+trace "local.sh started"
+trace "Common helpers sourced."
+debug "LOG_LEVEL set to ${LOG_LEVEL}"
+debug "NO_COLOR=${NO_COLOR}"
+debug "CI=${CI:-false}"
+debug "Commnad resolved, command=${COMMAND}"
 
 # ----------------------------------------------------
 # Dispatch commands
 # ----------------------------------------------------
+trace "Dispatching command=${COMMAND}"
 case "$COMMAND" in
   init)
     log "Initializing local environment..." 
@@ -87,5 +106,6 @@ COMMANDS:
 EOF
     ;;
 esac
+trace "local.sh finished..."
 
 
