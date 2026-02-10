@@ -151,37 +151,39 @@ log "===================================================="
 log ""
 
 # 4.0 Create Tests log folders & time stamp variable
-mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/smoke 
-mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/health
-mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/sanity
-mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/black-box
+# Commented out as log folders creation responsibility moved to scripts/local/helpers/init.sh
+# Delete once init.sh completed 
+#mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/smoke 
+#mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/health
+#mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/sanity
+#mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/black-box
 TS=$(date +%Y%m%d-%H%M%S)
 
 # 4.1 Run Smoke tests
 log "Running Smoke Tests"
-if ! ${SCRIPT_DIR}/../tests/common/dev-smt-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/smoke/smoke-$TS.log; then     
-    fail "Smoke tests failed! Check ./logs/smoke/smoke-*.log"
+if ! ${SCRIPT_DIR}/../tests/common/dev-smt-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/dev/shell/smoke-$TS.log; then     
+    fail "Smoke tests failed! Check ./logs/dev/shell/smoke-*.log"
     exit 1
 fi
 
 # 4.2 Run Health tests
 log "Running Health Tests"
-if ! ${SCRIPT_DIR}/../tests/common/dev-health-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/health/health-$TS.log; then
-    fail "Health tests failed! Check ./logs/health/health-*.log"
+if ! ${SCRIPT_DIR}/../tests/common/dev-health-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/dev/shell/health-$TS.log; then
+    fail "Health tests failed! Check ./logs/dev/shell/health-*.log"
     exit 1
 fi
   
 # 4.3 API sanity tests
 log "Running API Sanity Tests"
-if ! ${SCRIPT_DIR}/../tests/common/dev-sanity-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/sanity/sanity-$TS.log; then
-    fail "API Sanity tests failed! Check ./logs/sanity/api-sanity-*.log"
+if ! ${SCRIPT_DIR}/../tests/common/dev-sanity-01.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/dev/shell/sanity-$TS.log; then
+    fail "API Sanity tests failed! Check ./logs/dev/shell/api-sanity-*.log"
     exit 1
 fi
 
 # 4.4 Black-box only  
 log "Running Black-box Tests"
-if ! ${SCRIPT_DIR}/../tests/common/api-endpoints.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/api/dev/black-box/black-box-$TS.log; then
-    fail "Black-box tests failed! Check ./logs/black-box/black-box-*.log"
+if ! ${SCRIPT_DIR}/../tests/common/api-endpoints.sh 2>&1 | tee ${SCRIPT_DIR}/../../logs/dev/shell/black-box-$TS.log; then
+    fail "Black-box tests failed! Check ./logs/dev/shell/black-box-*.log"
     exit 1
 fi
 

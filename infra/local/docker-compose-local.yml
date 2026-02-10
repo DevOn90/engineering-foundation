@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ../../logs/api/local:/logs
+      - ../../logs/dev/docker:/logs
     networks:
       - dev-local
 
