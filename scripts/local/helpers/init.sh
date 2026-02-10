@@ -33,3 +33,4 @@ log "Other scripts (up, pull-env) will require this marker."
 #mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/health
 #mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/sanity
 #mkdir -p ${SCRIPT_DIR}/../../logs/api/dev/black-box
+# mkdir -p logs/{local,dev,test,prod}/{shell,docker} 

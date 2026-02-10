@@ -22,6 +22,8 @@
 #
 # Details:
 # For more details, check README.local.md 
+# Source common helpers AFTER LOG_FD is configured
+# so all logging functions inherit the correct output FD.
 #
 # Breaking changes require version bump
 # ----------------------------------------------------
@@ -42,6 +44,7 @@ LOG_LEVEL="${LOG_LEVEL:-INFO}"   # ERROR | WARN | INFO | DEBUG | TRACE
 NO_COLOR="${NO_COLOR:-false}"
 LOG_CONTEXT="${LOG_CONTEXT:-LOG_CONTEXT}"
 CI="${CI:-false}"
+LOG_FD="${LOG_FD:-1}"
 
 # --------------------------------------------------
 # Paths (resolved once, safely)
@@ -51,7 +54,7 @@ SCRIPT_DIR="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
 LOCAL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$LOCAL_DIR/../.." && pwd)"
 
-LOGS_DIR="$REPO_ROOT/logs"
+LOGS_DIR="$REPO_ROOT/logs/local/shell"
 INFRA_DIR="$REPO_ROOT/infra"
 ENV_DIR="$INFRA_DIR/runtime/env"
 
@@ -112,7 +115,7 @@ _log() {
     printf '{"ts":"%s","level":"%s","context":"%s","script":"%s","msg":"%s"}\n' \
       "$(timestamp)" "$level" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*"
   else
-    printf '%b[%s][%s][%s][%s]: %s%b\n' "$color" "$(timestamp)" "$level" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET"
+    printf '%b[%s][%s][%s][%s]: %s%b\n' "$color" "$(timestamp)" "$level" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&"$LOG_FD"
   fi
 }
 
@@ -126,7 +129,7 @@ warn() {
     _log WARN "$@"
   else
     printf '%b[%s][WARN][%s][%s]: %s%b\n' \
-    "$COLOR_YELLOW" "$(timestamp)" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&2
+    "$COLOR_YELLOW" "$(timestamp)" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&"$LOG_FD"
   fi
   
 }
@@ -136,7 +139,7 @@ error() {
     _log ERROR "$@"
   else
     printf '%b[%s][ERROR][%s][%s]: %s%b\n' \
-      "$COLOR_RED" "$(timestamp)" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&2
+      "$COLOR_RED" "$(timestamp)" "$LOG_CONTEXT" "$SCRIPT_NAME" "$*" "$COLOR_RESET" >&"$LOG_FD"
   fi
 }
 
@@ -178,8 +181,9 @@ require_initialized() {
 ## local.sh up     → FAILS (correctly)
 
 ###########################################################################
-## Add log file output 
-## ./local.sh up | tee logs/local-2026-02-07.log (how date??)
+## For new logging FS 
+## adjust deploy-DEv.sh
+## dcoker-compose.local.yml 
 
 ##############################################################################
 # INFO - What is happening?

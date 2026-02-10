@@ -42,6 +42,30 @@ done
 COMMAND="${ARGS[0]:-help}"
 
 # ----------------------------------------------------
+# Local log capture (non-CI)
+# ----------------------------------------------------
+if [[ "${CI:-false}" != "true" ]]; then
+  LOCAL_DIR=$(cd "${BASH_SOURCE[0]%/*}" && pwd)
+  LOG_DIR="$LOCAL_DIR/../../logs/local/shell"
+  LOG_FILE="$LOG_DIR/run-$(date -u +%Y%m%dT%H%M%SZ).log"
+
+  # Preserve original stdout for terminal output
+  exec 3>&1
+
+  # Dedicated log file descriptor for all logs
+  LOG_FD=5
+  export LOG_FD
+
+  # FD 5 pipeline:
+  #   - tee sends logs to:
+  #       1) terminal (FD 3)
+  #       2) file (ANSI stripped)
+  exec 5> >(
+    tee >(sed -E 's/\x1B\[[0-9;]*[mK]//g' >> "$LOG_FILE") >&3
+  )
+fi
+
+# ----------------------------------------------------
 # Source common helpers
 # ----------------------------------------------------
 
