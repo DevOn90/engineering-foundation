@@ -58,6 +58,8 @@ fail() {
 # Initialization
 # --------------------------------------------------
 
+DOCKER_STARTED=false
+
 log "Check of API contract matches the API implementation starts."
 
 # --------------------------------------------------
@@ -96,9 +98,18 @@ TMP_CONTRACT=$(mktemp /tmp/api-contract.XXXXXX.json)
 # INIT-Step 3: Cleanup
 # --------------------------------------------------
 
-# Ensure temp file is always removed
+# Ensure that docker containers are removed on exit
+docker_cleanup() {
+  if [[ "$DOCKER_STARTED" == "true" ]];then
+    log "Stopping docker compose service"
+    /usr/bin/docker compose --env-file ../runtime/env/local.env -f docker-compose-local.yml down -v --remove-orphans
+  fi
+}
+
+# Orchastrator for cleanup on Exit
 cleanup() {
     rm -f "$TMP_CONTRACT"
+    docker_cleanup
 }
 trap cleanup EXIT
 
@@ -108,7 +119,8 @@ trap cleanup EXIT
 # --------------------------------------------------
 log "Ensuring API is running via docker compose"
 cd "$COMPOSE_DIR"
-/usr/bin/docker compose --env-file ../runtime/env/local.env -f docker-compose-local.yml up -d --build  
+/usr/bin/docker compose --env-file ../runtime/env/local.env -f docker-compose-local.yml up -d --build 
+DOCKER_STARTED=true 
 
 
 # Wait for API
