@@ -10,17 +10,18 @@
 # Note: These tests are designed to be run in isolation and do not modify any files
 # ============================================================================  
 
-set -o errexit
-set -o nounset
-set -o pipefail
+# ============================================================================
+# Setup and Initialization
+# ============================================================================  
 
-# Source common helpers
-source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../local/helpers/common.sh"
-trace "Sourced common file from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../local/helpers/common.sh"
+# Source common setup for bootstrap script tests
+source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../common.sh"
+debug "Sourced common setup for bootstrap script tests from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../common.sh"
+trace "Starting unit tests for parse_flags function in bootstrap script"
 
-# Source the bootstrap script to access the parse_flags function
-source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../bootstrap/bootstrap.sh"
-trace "Sourced bootstrap file from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../bootstrap/bootstrap.sh"
+# ============================================================================
+# Main Test Logic
+# ============================================================================
 
 # Test 1: Default state (no flags)
 test_default_state() {

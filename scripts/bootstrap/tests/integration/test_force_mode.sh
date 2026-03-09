@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
+
 # ============================================================================
 # Integration Test for --force Mode of Bootstrap Script
 # ============================================================================
 # Purpose: Verify that the --force flag correctly forces re-bootstrap and recreates marker
+#
+# Note: This test is a placeholder and should be implemented with actual test logic to check the --force mode of the bootstrap script
+# ============================================================================
 
-set -o errexit
-set -o nounset
-set -o pipefail
+# ============================================================================
+# Setup and Initialization
+# ============================================================================  
 
-# Source common helpers
-source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../local/helpers/common.sh"
-trace "Sourced common file from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../local/helpers/common.sh"
-SCRIPT_DIR="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
-debug "Script directory path: $SCRIPT_DIR"  
+# Source common setup for bootstrap script tests
+source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../common.sh"
+debug "Sourced common setup for bootstrap script tests from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../common.sh"
+trace "Starting integration test for --force mode of bootstrap script"  
 
-# Source the bootstrap script to access its functions
-source "$SCRIPT_DIR/../../bootstrap.sh"
-trace "Sourced bootstrap script from: $SCRIPT_DIR/../../bootstrap.sh"   
-
+# ============================================================================
+# Main Test Logic
+# ============================================================================
 log "To be completed: Implement integration tests for --force mode of bootstrap script"

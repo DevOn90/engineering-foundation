@@ -3,22 +3,20 @@
 # Unit tests for make_bootstrap_marker function in bootstrap.sh
 # ============================================================================
 # Purpose: Validate the behavior of make_bootstrap_marker function under various conditions
-# - Tests marker creation, content, and error handling
-# - Uses a temporary directory to avoid affecting actual project files
-# - Should be run as part of the test suite for bootstrap.sh        
+# 
+# Note: This test is a placeholder and should be implemented with actual test logic to check the make_bootstrap_marker function in the bootstrap script
+# ============================================================================       
 
-set -o errexit
-set -o nounset
-set -o pipefail
+# ============================================================================
+# Setup and Initialization
+# ============================================================================
 
-# Source common helpers
-source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../local/helpers/common.sh"
-trace "Sourced common file from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../../../local/helpers/common.sh"
-SCRIPT_DIR="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
-debug "Script directory path: $SCRIPT_DIR"  
+# Source common setup for bootstrap script tests
+source "$(cd "${BASH_SOURCE[0]%/*}" && pwd)/../common.sh"
+debug "Sourced common setup for bootstrap script tests from: $(cd "${BASH_SOURCE[0]%/*}" && pwd)/../common.sh"
+trace "Starting unit tests for make_bootstrap_marker function in bootstrap script"
 
-# Source the bootstrap script to access the make_bootstrap_marker function
-source $SCRIPT_DIR/../../bootstrap.sh
-trace "Sourced bootstrap script from: $SCRIPT_DIR/../../bootstrap.sh"    
-
+# ============================================================================
+# Main Test Logic
+# ============================================================================
 log "To be completed: Implement tests for make_bootstrap_marker function"
