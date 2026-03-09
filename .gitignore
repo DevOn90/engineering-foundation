@@ -17,6 +17,11 @@ target/
 .env
 *.env
 
+# Local bootstrap / init markers
+.repo-bootstrap-marker.ini
+.local-init-marker.ini
+scripts/bootstrap/pseudo-code.md
+
 # Remove me
 apps/api/src/main/resources/db/migration/checkme.md
 apps/auth/architecture.md
