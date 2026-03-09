@@ -171,6 +171,19 @@ require_initialized() {
     || fail "Local environment not initialized. Run: scripts/local/local.sh init"
 }
 
+# ---------------------------------------------------
+# Schema validations
+# ---------------------------------------------------
+validate_ini_schema() {
+    local template="$1"
+    local actual="$2"
+
+    diff -u \
+    <(grep -E '^[a-z_]+=' "$template" | cut -d= -f1 | sort) \
+    <(grep -E '^[a-z_]+=' "$actual"   | cut -d= -f1 | sort) \
+    >/dev/null
+}
+
 
 ##########################################################################
 ## Related to above 'require_initialized'
@@ -180,10 +193,6 @@ require_initialized() {
 ## local.sh reset  → removes marker
 ## local.sh up     → FAILS (correctly)
 
-###########################################################################
-## For new logging FS 
-## adjust deploy-DEv.sh
-## dcoker-compose.local.yml 
 
 ##############################################################################
 # INFO - What is happening?

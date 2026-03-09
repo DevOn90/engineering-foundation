@@ -16,7 +16,9 @@ log "Purpose: Initialize this repo for local development."
 log "Actions:"
 log    "Create .local-initialized marker"
 log    "execute scripts/bootstrap/setup.sh"
-$INIT_DIR/../../bootstrap/setup.sh 
+$INIT_DIR/../../bootstrap/bootstrap.sh --status
+echo $?
+#if [[ $INIT_DIR/../../bootstrap/bootstrap.sh --status == "" ]]
 log    "Create log directories"
 log    "Optional: generate or link .env placeholders"
 log "Must be run once per repo clone."
