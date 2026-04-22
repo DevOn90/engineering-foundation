@@ -19,7 +19,7 @@ services:
 
   db:
     container_name: db-local-dev
-    image: postgres:15  
+    image: postgres:18  
     env_file:
       - ../runtime/env/local.env
     ports:
