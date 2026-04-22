@@ -13,3 +13,4 @@ What this script does:
 - Performs any future onboarding tasks (dependencies, migrations, etc.)
 
 Note: On Windows, always run with bash ./scripts/setup.sh.
+
