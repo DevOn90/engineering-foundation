@@ -10,7 +10,7 @@ RUN mvn -B clean package -DskipTests
 
 
 # ---------- Runtime stage ----------
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 
 WORKDIR /app
 
