@@ -14,4 +14,4 @@ What this script does:
 
 Note: On Windows, always run with bash ./scripts/setup.sh.
 
-empty commit to main
+empty commit to main now
