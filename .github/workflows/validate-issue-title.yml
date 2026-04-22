@@ -1,0 +1,52 @@
+name: Validate Issue Title
+
+permissions:
+  issues: write
+
+on: 
+  issues:
+    types: [opened, edited]
+
+jobs: 
+  validate-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate issue title
+        run: |
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          PATTERN="^(business-problem|epic|feature|bug|documentation|chore): .+$"
+          if [[ ! "$ISSUE_TITLE" =~ $PATTERN ]]; then
+            echo "::error::Issue title does not follow the conventional format."
+            echo "::error::Expected format: <type>: <description>"
+            echo "::error::Example: feature: add new parsing feature"
+            exit 1
+          fi
+      
+      - name: Comment on invalid title
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.issue.number;
+            const repo = context.repo.repo;
+            const owner = context.repo.owner;
+            const issue_title = context.payload.issue.title;
+            const body = [
+              `[ ----------------Meta--------------------- ]`,
+              `👨🏻‍💼 Owner: **${owner}**`,
+              `📦 Repository: **${repo}**`,
+              `🔢 Issue **#${issue_number}**`,
+              `📝 Current title: **"${issue_title}"**`,
+              `[ ----------------Body--------------------- ]`,
+              ``,
+              `⚠️ Your issue title does not follow the conventional format.`,
+              `Please update it to match the expected format: &lt;type&gt;: &lt;description&gt;. Space between : and description is required.`,
+              `Allowed types: business-problem, epic, feature, bug, documentation, chore.`,
+              `For example: "feature: add new parsing feature."`
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number,
+              body
+            });
