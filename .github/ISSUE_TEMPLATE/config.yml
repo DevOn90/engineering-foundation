@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+# contact_links: []
+
+# Preset (disabled): uncomment this block when you want contact options
+# contact_links:
+#   - name: Questions and Discussions
+#     url: https://github.com/DevOn90/Test_Guide_Project/discussions
+#     about: Ask and answer questions in GitHub Discussions.
+#   - name: Security Vulnerability Report
+#     url: https://github.com/DevOn90/Test_Guide_Project/security/advisories/new
+#     about: Report security vulnerabilities privately.
+
+# Minimal enabled form (if you only want one link):
+# contact_links:
+#   - name: Questions and Discussions
+#     url: https://github.com/DevOn90/Test_Guide_Project/discussions
+#     about: Ask and answer questions in GitHub Discussions.     

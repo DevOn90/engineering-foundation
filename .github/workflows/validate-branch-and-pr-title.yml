@@ -1,0 +1,131 @@
+name: Branch and Pull Request Title Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs: 
+    validate-branch-and-pr-title:
+        runs-on: ubuntu-latest
+        
+        steps:
+            - name: Validate Branch Title
+              id: branch_check
+              run: |
+                PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+                if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+                  echo "Branch created by dependabot, skipping naming convention check."
+                  exit 0
+                fi
+                
+                BRANCH_NAME="${{ github.head_ref }}"
+                
+                # Pattern accepts either issue-based or adhoc branches
+                ISSUE_BRANCH_PATTERN='^[0-9]+-(business-problem|epic|feature|bug|documentation|chore)-[a-zA-Z0-9-]+$'
+                ADHOC_BRANCH_PATTERN='^adhoc-(documentation|chore)-[a-zA-Z0-9-]+$'
+                
+                echo "Checking branch name: $BRANCH_NAME"
+
+                if [[ ! "$BRANCH_NAME" =~ $ISSUE_BRANCH_PATTERN ]] && [[ ! "$BRANCH_NAME" =~ $ADHOC_BRANCH_PATTERN ]]; then
+                  echo "::error::Branch name does not follow the conventional format."
+                  echo "::error::Expected formats:"
+                  echo "::error::  - Issue-based: <issue-number>-<type>-<description>"
+                  echo "::error::    Example: 123-feature-add-new-parsing-feature"
+                  echo "::error::  - Adhoc (documentation|chore only): adhoc-<type>-<description>"
+                  echo "::error::    Example: adhoc-documentation-fix-readme-link"
+                  exit 1
+                fi
+
+            - name: Validate Pull Request Title
+              id: pr_check
+              run: |
+                PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+                BRANCH_NAME="${{ github.head_ref }}"
+
+                if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+                  echo "Pull request created by dependabot, skipping naming convention check."
+                  exit 0
+                fi
+                
+                TITLE="${{ github.event.pull_request.title }}"
+                ISSUE_PR_PATTERN='^(business-problem|epic|feature|bug|documentation|chore): .+$'
+                ADHOC_PR_PATTERN='^adhoc-(documentation|chore): .+$'
+                 
+                echo "Checking PR title: $TITLE"
+                
+                # Check if branch is adhoc
+                if [[ "$BRANCH_NAME" =~ ^adhoc- ]]; then
+                    # Adhoc branches: only documentation and chore allowed
+                    if [[ ! "$TITLE" =~ $ADHOC_PR_PATTERN ]]; then
+                    echo "::error::Adhoc PR title must use only 'adhoc-documentation' or 'adhoc-chore' types."
+                    echo "::error::Expected format: adhoc-<documentation|chore>: <description>"
+                    echo "::error::Example: adhoc-documentation: fix broken link"
+                    exit 1
+                    fi
+                else
+                    # check if PR title comply with the conventional format
+                    if [[ ! "$TITLE" =~ $ISSUE_PR_PATTERN ]]; then
+                        echo "::error::Pull request title does not follow the conventional format."
+                        echo ""
+                        echo "::error::Expected format: <type>: <description>"
+                        echo "::error::Example: feature: add new parsing feature"
+                        exit 1
+                    fi
+                fi                      
+
+            - name: Comment on invalid branch or PR title
+              if: ${{ failure() && github.event_name == 'pull_request' }}
+              uses: actions/github-script@v7
+              env:
+                PR_NUMBER: ${{ github.event.pull_request.number }}
+                PR_TITLE: ${{ github.event.pull_request.title }}
+                PR_BRANCH: ${{ github.head_ref }}
+              with:
+                script: |
+                  const issueNumber = Number(process.env.PR_NUMBER);
+
+                  if (!issueNumber) {
+                    console.log('No pull request found in the event payload. Skipping comment creation.');
+                    return;
+                  }
+
+                  const body = [
+                    `[ ----------------Meta--------------------- ]`,
+                    `👨🏻‍💼 Owner: **${context.repo.owner}**`,
+                    `📦 Repository: **${context.repo.repo}**`,
+                    `🔢 Pull Request **#${issueNumber}**`,
+                    `📝 Branch title: **"${process.env.PR_BRANCH}"**`,
+                    `📝 PR title: **"${process.env.PR_TITLE}"**`,
+                    `[ ----------------Body--------------------- ]`,
+                    ``,
+                    `⚠️ Your branch name and/or pull request title does not follow the conventional format.`,
+                    `📚 For guidance on handling non-compliant branches, see the QUALITY_ASSURANCE/02_Project Governance Lifecycle/github/05_github-exceptions/exceptions-guide.md.`,
+                    ``,
+                    `Please update them to match the expected formats:`,
+                    ``,
+                    `**Issue-based (recommended):**`,
+                    `- Branch name: &lt;issue-number&gt;-&lt;type&gt;-&lt;description&gt;`,
+                    `  **Example:** 123-feature-add-new-parsing-feature`,
+                    `- PR title: &lt;type&gt;: &lt;description&gt;`,
+                    `  **Example:** feature: add new parsing feature`,
+                    `- Allowed types: business-problem, epic, feature, bug, documentation, chore`,
+                    ``,
+                    `**Adhoc (documentation|chore only):**`,
+                    `- Branch name: adhoc-&lt;type&gt;-&lt;description&gt;`,
+                    `  **Example:** adhoc-documentation-fix-readme-link`,
+                    `- PR title: adhoc-&lt;type&gt;: &lt;description&gt;`,
+                    `  **Example:** adhoc-documentation: fix broken link`,
+                    `- Allowed types: documentation, chore`,
+                    ``
+                  ].join('\n');
+                  
+                  await github.rest.issues.createComment({
+                    ...context.repo,
+                    issue_number: issueNumber,
+                    body
+                  });
