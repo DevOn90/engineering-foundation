@@ -1,5 +1,10 @@
 # Dependency / Build System Change
 
+> ⚠️ This PR will not be reviewed unless:
+> - All relevant sections are completed
+> - Checkboxes reflect actual state
+> - Required explanations are provided
+
 ## What changed?
 - [ ] New Dockerfile
 - [ ] New docker-compose
@@ -14,5 +19,8 @@
 - [ ] Directory paths verified
 - [ ] Schedule reviewed
 
-## Notes
-Explain how dependabot coverage is ensured.
+## Dependabot Coverage
+
+Describe how dependabot.yml was verified or updated.
+
+<!-- REQUIRED: explain coverage -->
