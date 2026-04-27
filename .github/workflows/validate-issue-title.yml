@@ -12,9 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate issue title
-        run: |
-          ISSUE_TITLE="${{ github.event.issue.title }}"
-          PATTERN="^(business-problem|epic|feature|bug|documentation|chore): .+$"
+        env:
+          ISSUE_TITLE: "${{ github.event.issue.title }}"
+
+          PATTERN: '^(business-problem|epic|feature|bug|documentation|chore): .+$'
+        run: |         
           if [[ ! "$ISSUE_TITLE" =~ $PATTERN ]]; then
             echo "::error::Issue title does not follow the conventional format."
             echo "::error::Expected format: <type>: <description>"
