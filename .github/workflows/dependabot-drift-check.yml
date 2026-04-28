@@ -1,0 +1,79 @@
+name: Dependabot Drift Check
+
+permissions:
+  contents: read
+  issues: write
+
+on:
+    schedule:
+        - cron: '0 20 * * 0' 
+    workflow_dispatch:
+
+jobs:
+    dependabot-drift-check:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+            - name: Check for Dependabot Drift
+              id: drift
+              continue-on-error: true
+              run: |
+                set +e
+                
+                # Run the drift check script and capture its output
+                OUTPUT=$(bash .github/scripts/dependabot-drift-check.sh 2>&1)
+                EXIT_CODE=$?
+                set -e 
+                {
+                  echo "output<<EOF"
+                  echo "$OUTPUT"
+                  echo "EOF"
+                } >> $GITHUB_OUTPUT
+                exit $EXIT_CODE
+
+            - name: Open or Update Issue on Failure
+              if: steps.drift.outcome == 'failure'
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                DRIFT_OUTPUT: ${{ steps.drift.outputs.output }}
+              run: |
+
+                # Create a label for dependabot drift if it doesn't exist
+                gh label create "dependabot-drift" \
+                --description "Dependabot configuration drift detected" \
+                --color "e4e669" \
+                --force
+                
+                # Check if an open issue with the label already exists 
+                # and either comment on it or create a new one with the drift output as the body 
+                EXISTING=$(gh issue list \
+                  --label "dependabot-drift" \
+                  --state open \
+                  --json number \
+                  --jq '.[0].number')
+  
+                if [ -n "$EXISTING" ]; then
+                   gh issue edit "$EXISTING" --body "$DRIFT_OUTPUT"
+                else
+                   gh issue create \
+                     --title "bug: Dependabot Drift Detected" \
+                     --body "$DRIFT_OUTPUT" \
+                     --label "dependabot-drift"
+                fi
+
+            - name: Close Issue on Success
+              if: steps.drift.outcome == 'success'
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                EXISTING=$(gh issue list \
+                  --label "dependabot-drift" \
+                  --state open \
+                  --json number \
+                  --jq '.[0].number')
+
+                if [ -n "$EXISTING" ]; then
+                  gh issue close "$EXISTING" \
+                    --comment "✅ Drift resolved. Closing automatically."
+                fi
