@@ -2,6 +2,7 @@ name: Deps Review Instruction
 
 permissions:
   pull-requests: write
+  
 
 on: 
   pull_request:
