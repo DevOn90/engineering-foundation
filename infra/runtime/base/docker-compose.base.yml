@@ -7,7 +7,7 @@ services:
       - app-net
 
   db:
-    image: postgres:15
+    image: postgres:18
     networks:
       - app-net
 
